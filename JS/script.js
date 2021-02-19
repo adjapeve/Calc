@@ -27,49 +27,88 @@ function operate(numa, operator, numb) {
             result = multiply(numa, numb);
             break;
         case "/":
-            result = divide(numa, numb);
+            if (numb == 0) {
+                result = `error: ${numa} can not be divided by 0`;
+            } else
+                result = divide(numa, numb);
             break;
     }
     return result;
 }
 
 function getResult(valuesSeparated) {
-    let count = 0;
     let result = "";
-    while (count < valuesSeparated.length) {
-        result = operate(parseInt(valuesSeparated[0]), valuesSeparated[1], parseInt(valuesSeparated[2]));
-        valuesSeparated.splice(0, 2);
-        valuesSeparated[0] = result;
-        console.log(result);
-        count++;
-    }
-    screen.textContent = result;
+    while (valuesSeparated.length > 1) {
+        console.log(valuesSeparated[0], valuesSeparated[1], valuesSeparated[2]);
+        result = operate(parseFloat(valuesSeparated[0]), valuesSeparated[1], parseFloat(valuesSeparated[2]));
+        if (typeof result == 'string') {
+            break;
+        } else {
+            valuesSeparated.splice(0, 2);
+            valuesSeparated[0] = result;
+            console.log(result);
+        }
+    } typeof result == 'string' ? showResults(result) : showResults(result.toFixed(2));
 }
 
 function populateScreen(e) {
-    screen.textContent = screen.textContent + e.target.textContent;
-    if (e.target.textContent == "=")
-        divideFormula(screen.textContent);
-    if (e.target.textContent == "Clear")
-        screen.textContent = "";
+    switch (e.target.textContent) {
+        case "=":
+            divideFormula(screen.textContent);
+            break;
+        case "Clear":
+            screen.textContent = 0;
+            break;
+        case "Del":
+            let newFormula = screen.textContent;
+            newFormula = newFormula.substring(0, newFormula.length - 1);
+            showResults(newFormula);
+            break;
+        default:
+            if (screen.textContent == "0") {
+                screen.textContent = e.target.textContent
+            }
+            else screen.textContent += e.target.textContent;
+    }
 }
 
 function divideFormula(formula) {
+    let validation = /^[+*/-]+$/;
     let currentNumber = "";
     let origValues = formula.split("");
     let valuesSeparated = [];
-    for (let i = 0; i < origValues.length - 1; i++) {
-        if (!/^[+*/-]+$/.test(origValues[i])) {
-            currentNumber += origValues[i];
+    let error = false;
+    for (let i = 0; i < origValues.length; i++) {
+        if ((validation.test(origValues[i]) && validation.test(origValues[i - 1]))) {
+            showResults("error: An operator can not be followed by another operator");
+            error = true;
+            break;
+        }
+        else if (validation.test(origValues[origValues.length - 1])) {
+            showResults("error: The formula can not end with an operator");
+            error = true;
+            break;
         }
         else {
-            valuesSeparated.push(currentNumber);
-            valuesSeparated.push(origValues[i]);
-            currentNumber = "";
+
+            if (!validation.test(origValues[i])) {
+                currentNumber += origValues[i];
+            }
+            else {
+                valuesSeparated.push(currentNumber);
+                valuesSeparated.push(origValues[i]);
+                currentNumber = "";
+            }
         }
     }
-    valuesSeparated.push(origValues[origValues.length - 2]);
-    getResult(valuesSeparated);
+    if (!error) {
+        valuesSeparated.push(formula.substring(formula.length, formula.lastIndexOf(valuesSeparated[valuesSeparated.length - 1]) + 1));
+        getResult(valuesSeparated)
+    }
+}
+
+function showResults(message) {
+    screen.textContent = message;
 }
 
 let key = document.querySelector(".buttons");
