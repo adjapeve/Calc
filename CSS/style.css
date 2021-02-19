@@ -7,7 +7,7 @@ body{
 .container{
     display:flex;
     flex-wrap: wrap;
-    flex: 0 1 50%;
+    flex: 0 1 20%;
     min-width:400px;
 }
 .buttons,.result{
