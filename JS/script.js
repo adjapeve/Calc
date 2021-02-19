@@ -64,6 +64,38 @@ function populateScreen(e) {
             newFormula = newFormula.substring(0, newFormula.length - 1);
             showResults(newFormula);
             break;
+        case "+":
+            if (screen.textContent.charAt(screen.textContent.length - 1) == "-") {
+                let newFormula = screen.textContent;
+                newFormula = newFormula.substring(0, newFormula.length - 1) + "+";
+                showResults(newFormula);
+                break;
+            } else screen.textContent += e.target.textContent;
+            break;
+        case "-":
+            if (screen.textContent.charAt(screen.textContent.length - 1) == "+") {
+                let newFormula = screen.textContent;
+                newFormula = newFormula.substring(0, newFormula.length - 1) + "-";
+                showResults(newFormula);
+                break;
+            } else screen.textContent += e.target.textContent;
+            break;
+        case "*":
+            if (screen.textContent.charAt(screen.textContent.length - 1) == "/") {
+                let newFormula = screen.textContent;
+                newFormula = newFormula.substring(0, newFormula.length - 1) + "*";
+                showResults(newFormula);
+                break;
+            } else screen.textContent += e.target.textContent;
+            break;
+        case "/":
+            if (screen.textContent.charAt(screen.textContent.length - 1) == "*") {
+                let newFormula = screen.textContent;
+                newFormula = newFormula.substring(0, newFormula.length - 1) + "/";
+                showResults(newFormula);
+                break;
+            } else screen.textContent += e.target.textContent;
+            break;
         default:
             if (screen.textContent == "0") {
                 screen.textContent = e.target.textContent
